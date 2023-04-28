@@ -35,7 +35,6 @@ class Game:
         user_input = pygame.key.get_pressed()
         self.player.update(user_input)
 
-        
 
     def draw(self):
         self.clock.tick(FPS)
@@ -54,3 +53,6 @@ class Game:
             self.x_pos_bg = 0
         self.x_pos_bg -= self.game_speed
         print(self.x_pos_bg)
+
+
+
