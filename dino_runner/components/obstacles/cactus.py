@@ -1,5 +1,6 @@
 import random
 from dino_runner.components.obstacles.obstacle import Obstacle
+from dino_runner.utils.constants import SCREEN_HEIGHT
 
 
 
@@ -14,4 +15,5 @@ class Cactus(Obstacle):
         super().__init__(image, self.type)
         self.rect.y = 325
 
-        
+   
+  
