@@ -1,11 +1,10 @@
+import os
 import pygame
+import random
 from dino_runner.components.dinosaur import Dinosaur
-from dino_runner.components import text_utils
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
+from dino_runner.components import text_utils
 from dino_runner.components.power_ups.power_up_manager import PowerUpManager
-
-
-
 from dino_runner.utils.constants import BG, ICON, RUNNING, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS
 
 
@@ -22,79 +21,84 @@ class Game:
         self.y_pos_bg = 380
         self.player = Dinosaur()
         self.obstacle_manager = ObstacleManager()
+        self.power_up_manager = PowerUpManager()
         self.points = 0
         self.running = True
         self.death_count = 0
-        self.power_up_manager = PowerUpManager()
-
-
+        self.song = "D:\Github\Dino-Runner-Grupo2-2023\dino_runner\components\Dino_music\SonReal_Parachute.mp3"
+    
+    
     def run(self):
+        #play music
+        pygame.mixer.music.load(self.song)
+        pygame.mixer.music.set_volume(0.1)
+        pygame.mixer.music.play(-1)
+
         # Game loop: events - update - draw
         self.obstacle_manager.reset_obstacles()
         self.power_up_manager.reset_power_ups(self.points)
         self.game_speed = 20
-        self.points = 0        
+        self.points = 0
         self.playing = True
         while self.playing:
             self.events()
             self.update()
             self.draw()
-        pygame.quit()
-
+    
     def execute(self):
         while self.running:
             if not self.playing:
                 self.show_menu()
 
-
     def show_menu(self):
         self.running = True
-        #print a white background
+        #Print a white background
         white_color = (255, 255, 255)
         self.screen.fill(white_color)
 
-    #print menu elements
+        #Print menu elements
         self.print_menu_elements()
         pygame.display.update()
-        #create a menu event handler
-        self.handle_key_events_on_menu()    
-
+        # create a menu event handler
+        self.handle_key_events_on_menu()
+    
     def print_menu_elements(self):
         half_screen_height = SCREEN_HEIGHT // 2
         half_screen_width = SCREEN_WIDTH // 2
 
         if self.death_count == 0:
-            text, text_rect = text_utils.get_centered_message("Press any key to start.")
+            text, text_rect = text_utils.get_centered_message('Press any key to Start')
             self.screen.blit(text, text_rect)
-
-        elif self.death_count < 0:
-            text, text_rect = text_utils.get_centered_message("press any key to restar.")
-            score, score_rect = text_utils.get_centered_message("your score: "+ str(self.points),
+        
+        #Tarea menu para despues de la muerte
+        elif self.death_count > 0:
+            text, text_rect = text_utils.get_centered_message('Press any Key to Restart')
+            score, score_rect = text_utils.get_centered_message('Your Score: ' + str(self.points),
                                                                 height=half_screen_height + 50)
-            death, death_rect = text_utils.get_centered_message("death count: "+ str(self.death_count),
-                                                                height= half_screen_height + 100)
+            death, death_rect = text_utils.get_centered_message('Death count: ' + str(self.death_count),
+                                                                height=half_screen_height + 100)
             self.screen.blit(score, score_rect)
             self.screen.blit(text, text_rect)
             self.screen.blit(death, death_rect)
-    
+
         self.screen.blit(RUNNING[0], (half_screen_width - 20, half_screen_height - 140))
 
-
     def handle_key_events_on_menu(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.running = False
-                self.playing = False
-                pygame.display.quit()
-                pygame.quit()
-                exit()
-            if event.type == pygame.KEYUP:
-                self.run()
+         for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+                    self.playing = False
+                    pygame.display.quit()
+                    pygame.quit()
+                    exit()
+                if event.type == pygame.KEYDOWN:
+                    self.run()
 
     def events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.playing = False
+                #Si sale del juego el estado re¿¿de running debe ser fals
                 self.running = False
         self.screen.fill((255, 255, 255))    
 
@@ -104,12 +108,10 @@ class Game:
         self.obstacle_manager.update(self)
         self.power_up_manager.update(self.points, self.game_speed, self.player)
 
-
-
     def draw(self):
         self.score()
         self.clock.tick(FPS)
-
+        # Removemos el fill porque lo hacemos en eventos self.screen.fill((255, 255, 255))
         self.draw_background()
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
@@ -125,7 +127,6 @@ class Game:
             self.screen.blit(BG, (image_width + self.x_pos_bg, self.y_pos_bg))
             self.x_pos_bg = 0
         self.x_pos_bg -= self.game_speed
-        print(self.x_pos_bg)
 
     def score(self):
         self.points += 1
@@ -133,5 +134,5 @@ class Game:
             self.game_speed += 1
         text, text_rect = text_utils.get_score_element(str(self.points))
         self.player.check_invincibility(self.screen)
-        self.screen.blit(text, text_rect)     
+        self.screen.blit(text, text_rect)
 

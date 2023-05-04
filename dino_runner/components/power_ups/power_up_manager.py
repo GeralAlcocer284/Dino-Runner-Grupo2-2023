@@ -1,8 +1,7 @@
 import random
 import pygame
-from dino_runner.components.obstacles.cactus import Cactus
 from dino_runner.components.power_ups.shield import Shield
-from dino_runner.utils.constants import LARGE_CACTUS, SMALL_CACTUS
+from dino_runner.components.power_ups.hammer import Hammer
 
 
 class PowerUpManager:
@@ -39,8 +38,18 @@ class PowerUpManager:
     def generate_power_ups(self, points):
         self.points = points
         if len(self.power_ups) == 0:
+
+                
             if self.when_appers == self.points:
                 print ("generating powerups")
-                self.power_ups.append(Shield())
-                self.when_appers = random.randint(self.when_appers+200, self.when_appers+400)
+                luck = random.randint(0,1)
+                if luck == 0:
+                    self.power_ups.append(Shield())
+                elif luck == 1:
+                     self.power_ups.append(Hammer())    
+                self.when_appers = random.randint(self.when_appers+100, self.when_appers+700)
         return self.power_ups
+    
+
+
+

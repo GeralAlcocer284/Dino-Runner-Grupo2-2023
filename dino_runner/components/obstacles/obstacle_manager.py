@@ -29,6 +29,7 @@ class ObstacleManager():
                 if not game.player.shield:              
                     pygame.time.delay(1000)
                     game.playing = False
+                    pygame.mixer.music.stop()
                     break         
                 else:
                     self.obstacles.remove(obstacle)        

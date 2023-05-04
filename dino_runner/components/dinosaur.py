@@ -1,21 +1,15 @@
 import pygame
 from pygame.sprite import Sprite
 
-from dino_runner.utils.constants import DEFAULT_TYPE, DUCKING, JUMPING, RUNNING, SCREEN_HEIGHT
-
-
-
+from dino_runner.utils.constants import DEFAULT_TYPE, DUCKING, DUCKING_SHIELD, JUMPING, JUMPING_SHIELD, RUNNING, RUNNING_SHIELD, SCREEN_HEIGHT
 class Dinosaur(Sprite):
-
     X_POS = 80
     Y_POS = 310
-    JUMP_VEL = 10
-
+    JUMP_VEL = 8.5
 
     def __init__(self):
         self.image = RUNNING[0]
         self.dino_rect = self.image.get_rect()
-
         self.dino_rect.x = self.X_POS
         self.dino_rect.y = self.Y_POS
         self.step_index = 0
@@ -34,70 +28,82 @@ class Dinosaur(Sprite):
         if self.dino_duck:
             self.duck()
 
-                    
-        if user_input[pygame.K_DOWN] and not self.dino_jump:
+        if user_input[pygame.K_DOWN]and not self.dino_jump:
             self.dino_run = False
             self.dino_duck = True
             self.dino_jump = False
-
         elif user_input[pygame.K_UP] and not self.dino_jump:
             self.dino_run = False
             self.dino_duck = False
             self.dino_jump = True
-
-        
         elif not self.dino_jump:
             self.dino_run = True
             self.dino_duck = False
-            self.dino_jump = False   
-
-
-        
+            self.dino_jump = False
+            
         if self.step_index >= 10:
             self.step_index = 0
-    
+
     def draw(self, screen):
         screen.blit(self.image, (self.dino_rect.x, self.dino_rect.y))
-
+        
     def run(self):
         self.dino_rect.y = self.Y_POS
         if self.step_index < 5:
             self.image = RUNNING[0]
-        else:
-            self.image = RUNNING[1]  
+        elif self.step_index > 5:
+            self.image = RUNNING[1]
+
+        if self.shield:
+            if self.step_index < 5:
+                self.image = RUNNING_SHIELD [0]
+            elif self.step_index > 5:
+                self.image = RUNNING_SHIELD [1]
+
+
+
 
         self.step_index += 1
 
-#agregar la imagen de los power ups
-
-        
     def jump(self):
         self.image = JUMPING
         if self.dino_jump:
-            self.dino_rect.y -= self.jump_vel * 4
-            self.jump_vel -= 0.8
-
+            self.dino_rect.y = self.dino_rect.y - self.jump_vel * 4
+            self.jump_vel = self.jump_vel - 0.8
+        
         if self.jump_vel < -self.JUMP_VEL:
             self.dino_rect.y = self.Y_POS
             self.dino_jump = False
-            self.jump_vel = self.JUMP_VEL   
-
+            self.jump_vel = self.JUMP_VEL
+        
+        if self.shield:
+            self.image = JUMPING_SHIELD
 
     def duck(self):
-        self.dino_rect.y = SCREEN_HEIGHT - (SCREEN_HEIGHT * 0.43) #342
+        self.image = DUCKING [0]
+        self.dino_rect.y = SCREEN_HEIGHT - (SCREEN_HEIGHT * 0.42) 
         if self.step_index < 5:
             self.image = DUCKING[0]
-        else:
+        elif self.step_index > 5:
             self.image = DUCKING[1]
+
+        if self.shield:
+            if self.step_index < 5:
+                self.image = DUCKING_SHIELD [0]
+            elif self.step_index > 5:
+                self.image = DUCKING_SHIELD [1]
+
+
+
         self.step_index += 1
- 
+
     def setup_state_booleans(self):
-        self.shield = False 
+        self.shield = False
+        self.hammer = False
         self.show_text = False
         self.shield_time_up = 0
         self.has_powerup = False
-
-
+    
     def check_invincibility(self, screen):
         if self.shield:
             time_to_show = round ((self.shield_time_up - pygame.time.get_ticks())/1000,2)
@@ -108,20 +114,6 @@ class Dinosaur(Sprite):
                     textRect = text.get_rect()
                     textRect.center = (500, 40)
                     screen.blit(text, textRect)
-                else:
-                    self.shield = False    
-
-
-
-
-
-
-
-
-
-
-
-        
-
-
-
+            else:
+                self.shield = False
+   
