@@ -1,7 +1,7 @@
 import pygame
 from pygame.sprite import Sprite
 
-from dino_runner.utils.constants import DEFAULT_TYPE, DUCKING, DUCKING_HAMMER, DUCKING_SHIELD, JUMPING, JUMPING_HAMMER, JUMPING_SHIELD, RUNNING, RUNNING_HAMMER, RUNNING_SHIELD, SCREEN_HEIGHT
+from dino_runner.utils.constants import DEFAULT_TYPE, DUCKING, DUCKING_SHIELD, JUMPING, JUMPING_SHIELD, PLAYER_STARTING_LIVES, RUNNING, RUNNING_SHIELD, SCREEN_HEIGHT
 class Dinosaur(Sprite):
     X_POS = 80
     Y_POS = 310
@@ -19,7 +19,7 @@ class Dinosaur(Sprite):
         self.jump_vel = self.JUMP_VEL
         self.type = DEFAULT_TYPE
         self.setup_state_booleans()
-        self.life = 0
+        self.lives = PLAYER_STARTING_LIVES
 
     def update(self, user_input):
         if self.dino_jump:
@@ -61,11 +61,7 @@ class Dinosaur(Sprite):
             elif self.step_index > 5:
                 self.image = RUNNING_SHIELD [1]
         
-        if self.hammer:
-            if self.step_index < 5:
-                self.image = RUNNING_HAMMER[0]
-            elif self.step_index > 5:
-                self.image = RUNNING_HAMMER[1]
+
 
 
         self.step_index += 1
@@ -84,8 +80,6 @@ class Dinosaur(Sprite):
         if self.shield:
             self.image = JUMPING_SHIELD
 
-        if self.hammer:
-            self.image = JUMPING_HAMMER
 
 
     def duck(self):
@@ -102,27 +96,20 @@ class Dinosaur(Sprite):
             elif self.step_index > 5:
                 self.image = DUCKING_SHIELD [1]
 
-        if self.hammer:
-            if self.step_index < 5:
-                self.image = DUCKING_HAMMER[0]
-            elif self.step_index > 5:
-                self.image = DUCKING_HAMMER[1]            
-
-
 
         self.step_index += 1
 
     def setup_state_booleans(self):
         self.shield = False
-        self.hammer = False
-        self.heart = 0
+        self.heart = False
         self.show_text = False
         self.shield_time_up = 0
+        self.hammer_time_up = 0
         self.has_powerup = False
     
     def check_invincibility(self, screen):
         if self.shield:
-            time_to_show = round ((self.shield_time_up - pygame.time.get_ticks())/1000,2)
+            time_to_show = round ((self.shield_time_up - pygame.time.get_ticks())/50)
             if time_to_show >= 0:
                 if self.show_text:
                     font = pygame.font.Font('freesansbold.ttf', 18)
@@ -132,4 +119,14 @@ class Dinosaur(Sprite):
                     screen.blit(text, textRect)
             else:
                 self.shield = False
-
+    '''def check_lifes(self, screen):
+        if self.heart:
+            self.show_text
+            font = pygame.font.Font('freesansbold.ttf', 18)
+            text = font.render(f'+1 life ', True, (0,0,0))
+            textRect = text.get_rect()
+            textRect.center = (500, 40)
+            screen.blit(text, textRect)
+        else:
+            self.heart = False'''
+                                
