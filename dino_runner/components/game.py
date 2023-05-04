@@ -5,7 +5,7 @@ from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 from dino_runner.components import text_utils
 from dino_runner.components.power_ups.power_up_manager import PowerUpManager
-from dino_runner.utils.constants import BG, ICON, RUNNING, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS
+from dino_runner.utils.constants import BG, CLOUD, ICON, RUNNING, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS
 
 
 class Game:
@@ -19,12 +19,15 @@ class Game:
         self.game_speed = 20
         self.x_pos_bg = 0
         self.y_pos_bg = 380
+        self.x_pos_cloud = SCREEN_WIDTH
+        self.y_pos_cloud = random.randint(50, 80)
         self.player = Dinosaur()
         self.obstacle_manager = ObstacleManager()
         self.power_up_manager = PowerUpManager()
         self.points = 0
         self.running = True
         self.death_count = 0
+        self.life = 1
         self.song = "D:\Github\Dino-Runner-Grupo2-2023\dino_runner\components\Dino_music\SonReal_Parachute.mp3"
     
     
@@ -66,12 +69,12 @@ class Game:
         half_screen_height = SCREEN_HEIGHT // 2
         half_screen_width = SCREEN_WIDTH // 2
 
-        if self.death_count == 0:
+        if self.life == 1:
             text, text_rect = text_utils.get_centered_message('Press any key to Start')
             self.screen.blit(text, text_rect)
         
         #Tarea menu para despues de la muerte
-        elif self.death_count > 0:
+        elif self.life == 0:
             text, text_rect = text_utils.get_centered_message('Press any Key to Restart')
             score, score_rect = text_utils.get_centered_message('Your Score: ' + str(self.points),
                                                                 height=half_screen_height + 50)
@@ -110,9 +113,11 @@ class Game:
 
     def draw(self):
         self.score()
+        self.lifes()
         self.clock.tick(FPS)
         # Removemos el fill porque lo hacemos en eventos self.screen.fill((255, 255, 255))
         self.draw_background()
+        self.cloud()
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
         self.power_up_manager.draw(self.screen)
@@ -128,6 +133,16 @@ class Game:
             self.x_pos_bg = 0
         self.x_pos_bg -= self.game_speed
 
+    def cloud(self):
+        image_width = CLOUD.get_width()
+        self.screen.blit(CLOUD, (self.x_pos_cloud, self.y_pos_cloud))
+        self.screen.blit(CLOUD, (image_width + self.x_pos_cloud, self.y_pos_cloud))
+        if self.x_pos_cloud <= -image_width:
+            self.screen.blit(CLOUD, (image_width + self.x_pos_cloud, self.y_pos_cloud))
+            self.x_pos_cloud = SCREEN_WIDTH
+        self.x_pos_cloud -= self.game_speed        
+
+
     def score(self):
         self.points += 1
         if self.points % 100 == 0:
@@ -136,3 +151,7 @@ class Game:
         self.player.check_invincibility(self.screen)
         self.screen.blit(text, text_rect)
 
+    def lifes(self):
+        if self.life:   
+            text, text_rect = text_utils.dino_lifes(str(self.life))
+            self.screen.blit(text, text_rect)

@@ -1,7 +1,7 @@
 import pygame
 from pygame.sprite import Sprite
 
-from dino_runner.utils.constants import DEFAULT_TYPE, DUCKING, DUCKING_SHIELD, JUMPING, JUMPING_SHIELD, RUNNING, RUNNING_SHIELD, SCREEN_HEIGHT
+from dino_runner.utils.constants import DEFAULT_TYPE, DUCKING, DUCKING_HAMMER, DUCKING_SHIELD, JUMPING, JUMPING_HAMMER, JUMPING_SHIELD, RUNNING, RUNNING_HAMMER, RUNNING_SHIELD, SCREEN_HEIGHT
 class Dinosaur(Sprite):
     X_POS = 80
     Y_POS = 310
@@ -19,6 +19,7 @@ class Dinosaur(Sprite):
         self.jump_vel = self.JUMP_VEL
         self.type = DEFAULT_TYPE
         self.setup_state_booleans()
+        self.life = 0
 
     def update(self, user_input):
         if self.dino_jump:
@@ -59,8 +60,12 @@ class Dinosaur(Sprite):
                 self.image = RUNNING_SHIELD [0]
             elif self.step_index > 5:
                 self.image = RUNNING_SHIELD [1]
-
-
+        
+        if self.hammer:
+            if self.step_index < 5:
+                self.image = RUNNING_HAMMER[0]
+            elif self.step_index > 5:
+                self.image = RUNNING_HAMMER[1]
 
 
         self.step_index += 1
@@ -79,9 +84,13 @@ class Dinosaur(Sprite):
         if self.shield:
             self.image = JUMPING_SHIELD
 
+        if self.hammer:
+            self.image = JUMPING_HAMMER
+
+
     def duck(self):
         self.image = DUCKING [0]
-        self.dino_rect.y = SCREEN_HEIGHT - (SCREEN_HEIGHT * 0.42) 
+        self.dino_rect.y = SCREEN_HEIGHT - (SCREEN_HEIGHT * 0.42) # 
         if self.step_index < 5:
             self.image = DUCKING[0]
         elif self.step_index > 5:
@@ -93,6 +102,12 @@ class Dinosaur(Sprite):
             elif self.step_index > 5:
                 self.image = DUCKING_SHIELD [1]
 
+        if self.hammer:
+            if self.step_index < 5:
+                self.image = DUCKING_HAMMER[0]
+            elif self.step_index > 5:
+                self.image = DUCKING_HAMMER[1]            
+
 
 
         self.step_index += 1
@@ -100,6 +115,7 @@ class Dinosaur(Sprite):
     def setup_state_booleans(self):
         self.shield = False
         self.hammer = False
+        self.heart = 0
         self.show_text = False
         self.shield_time_up = 0
         self.has_powerup = False
@@ -116,4 +132,4 @@ class Dinosaur(Sprite):
                     screen.blit(text, textRect)
             else:
                 self.shield = False
-   
+

@@ -2,6 +2,8 @@ import random
 import pygame
 from dino_runner.components.power_ups.shield import Shield
 from dino_runner.components.power_ups.hammer import Hammer
+from dino_runner.components.power_ups.heart import Heart
+
 
 
 class PowerUpManager:
@@ -42,14 +44,16 @@ class PowerUpManager:
                 
             if self.when_appers == self.points:
                 print ("generating powerups")
-                luck = random.randint(0,1)
+                luck = random.randint(0,2)
                 if luck == 0:
                     self.power_ups.append(Shield())
                 elif luck == 1:
-                     self.power_ups.append(Hammer())    
+                     self.power_ups.append(Hammer())
+                elif luck == 2:
+                    self.power_ups.append(Heart())         
                 self.when_appers = random.randint(self.when_appers+100, self.when_appers+700)
         return self.power_ups
-    
+
 
 
 

@@ -33,6 +33,16 @@ class ObstacleManager():
                     break         
                 else:
                     self.obstacles.remove(obstacle)        
+                if game.life > 0:
+                    game.death_count -= 1
+                    
+                elif game.life == 0:
+                    pygame.time.delay(1000)
+                    game.playing = False
+                    pygame.mixer.music.stop()
+                    break                    
+                
+
 
 
     def draw(self, screen):
