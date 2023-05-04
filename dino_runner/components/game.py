@@ -132,6 +132,6 @@ class Game:
         if self.points % 100 == 0:
             self.game_speed += 1
         text, text_rect = text_utils.get_score_element(str(self.points))
-        self.player.check_ininsibility(self.screen)
+        self.player.check_invincibility(self.screen)
         self.screen.blit(text, text_rect)     
 
