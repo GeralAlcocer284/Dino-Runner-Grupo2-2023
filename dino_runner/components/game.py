@@ -20,13 +20,14 @@ class Game:
         self.x_pos_bg = 0
         self.y_pos_bg = 380
         self.x_pos_cloud = SCREEN_WIDTH
-        self.y_pos_cloud = random.randint(50, 80)
+        self.y_pos_cloud = random.randint(50, 100)
         self.player = Dinosaur()
         self.obstacle_manager = ObstacleManager()
         self.power_up_manager = PowerUpManager()
         self.points = 0
         self.running = True
         self.death_count = 0
+        self.lifes = 1
         self.song = "D:\Github\Dino-Runner-Grupo2-2023\dino_runner\components\Dino_music\SonReal_Parachute.mp3"
     
     
@@ -72,8 +73,7 @@ class Game:
             text, text_rect = text_utils.get_centered_message('Press any key to Start')
             self.screen.blit(text, text_rect)
         
-        #Tarea menu para despues de la muerte
-        elif self.death_count <= 0:
+        elif self.death_count > 0:
             text, text_rect = text_utils.get_centered_message('Press any Key to Restart')
             score, score_rect = text_utils.get_centered_message('Your Score: ' + str(self.points),
                                                                 height=half_screen_height + 50)
@@ -112,6 +112,7 @@ class Game:
 
     def draw(self):
         self.score()
+        self.life()
         self.clock.tick(FPS)
         # Removemos el fill porque lo hacemos en eventos self.screen.fill((255, 255, 255))
         self.draw_background()
@@ -148,4 +149,8 @@ class Game:
         text, text_rect = text_utils.get_score_element(str(self.points))
         self.player.check_invincibility(self.screen)
         self.screen.blit(text, text_rect)
-  
+    
+    def life(self):
+
+        text, text_rect = text_utils.dino_lifes(str(self.lifes))
+        self.screen.blit(text, text_rect)

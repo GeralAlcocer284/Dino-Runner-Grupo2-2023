@@ -1,7 +1,7 @@
 import random
 import pygame
 from dino_runner.components.power_ups.shield import Shield
-from dino_runner.components.power_ups.heart import Heart
+
 
 
 
@@ -18,15 +18,12 @@ class PowerUpManager:
             if player.dino_rect.colliderect(power_up.rect):
                 power_up.start_time = pygame.time.get_ticks()
                 #add this part to Dino
-
                 player.shield = True
                 player.show_text = True
                 player.type = power_up.type
                 time_random = random.randrange (5, 8)
-
-                player.heart = True
-                #add this part to Dino
-                player.shield_time_up = power_up.start_time + (time_random * 1000)
+                player.shield_time_up = power_up.start_time + (time_random * 1000)            
+            
                 self.power_ups.remove(power_up)
 
     def draw(self, screen):
@@ -41,18 +38,10 @@ class PowerUpManager:
     def generate_power_ups(self, points):
         self.points = points
         if len(self.power_ups) == 0:
-
-                
             if self.when_appers == self.points:
                 print ("generating powerups")
-                luck = random.randint(0,1)
-                if luck == 0:
-                    self.power_ups.append(Shield())
-                elif luck == 1:
-                     self.power_ups.append(Heart())
-        
-                self.when_appers = random.randint(self.when_appers+100, self.when_appers+700)
+                self.power_ups.append(Shield())   
+                self.when_appers = random.randint(self.when_appers+200, self.when_appers+700)
         return self.power_ups
-
 
 

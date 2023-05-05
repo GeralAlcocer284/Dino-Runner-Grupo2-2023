@@ -78,4 +78,5 @@ SHIELD_TYPE = "shield"
 HAMMER_TYPE = "hammer"
 HEART_TYPE = "heart"
 
-PLAYER_STARTING_LIVES = 3
+
+
